@@ -1,0 +1,780 @@
+{
+  "address": "JYhgtXGuQWYvmmtiKwZJgDuaP1iPLjw3MjtwukFhAJQ",
+  "metadata": {
+    "name": "institute_validator",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "get_voting_state",
+      "docs": [
+        "View function to get voting state"
+      ],
+      "discriminator": [
+        225,
+        255,
+        32,
+        218,
+        141,
+        65,
+        232,
+        18
+      ],
+      "accounts": [
+        {
+          "name": "voting_state"
+        }
+      ],
+      "args": [],
+      "returns": {
+        "defined": {
+          "name": "VotingStateView"
+        }
+      }
+    },
+    {
+      "name": "initialize_registry",
+      "docs": [
+        "Initialize the InstituteRegistry (one-time setup)",
+        "Should be called once to create the singleton registry"
+      ],
+      "discriminator": [
+        189,
+        181,
+        20,
+        17,
+        174,
+        57,
+        249,
+        59
+      ],
+      "accounts": [
+        {
+          "name": "institute_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  115,
+                  116,
+                  105,
+                  116,
+                  117,
+                  116,
+                  101,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "initial_institutes",
+          "type": {
+            "vec": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "new_institute_election",
+      "docs": [
+        "Initiates an election for a new candidate institute",
+        "Creates a VotingState PDA to track the voting process"
+      ],
+      "discriminator": [
+        44,
+        162,
+        187,
+        132,
+        220,
+        217,
+        35,
+        181
+      ],
+      "accounts": [
+        {
+          "name": "voting_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  105,
+                  110,
+                  103,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "candidate_institute"
+              }
+            ]
+          }
+        },
+        {
+          "name": "institute_registry",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  115,
+                  116,
+                  105,
+                  116,
+                  117,
+                  116,
+                  101,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "proposer",
+          "docs": [
+            "Any account can propose (or restrict to registered institutes if needed)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "candidate_institute",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "remove_institute",
+      "docs": [
+        "Remove an institute from the registry (governance function)",
+        "Requires unanimous approval from all other institutes"
+      ],
+      "discriminator": [
+        81,
+        47,
+        76,
+        187,
+        149,
+        135,
+        206,
+        103
+      ],
+      "accounts": [
+        {
+          "name": "institute_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  115,
+                  116,
+                  105,
+                  116,
+                  117,
+                  116,
+                  101,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "institute_to_remove",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "vote",
+      "docs": [
+        "Cast a vote for or against a candidate institute",
+        "Automatically admits the candidate if 100% approval is reached"
+      ],
+      "discriminator": [
+        227,
+        110,
+        155,
+        23,
+        136,
+        126,
+        172,
+        25
+      ],
+      "accounts": [
+        {
+          "name": "voting_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  105,
+                  110,
+                  103,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "voting_state.candidate_institute",
+                "account": "VotingState"
+              }
+            ]
+          }
+        },
+        {
+          "name": "institute_registry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  115,
+                  116,
+                  105,
+                  116,
+                  117,
+                  116,
+                  101,
+                  95,
+                  114,
+                  101,
+                  103,
+                  105,
+                  115,
+                  116,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "voter",
+          "docs": [
+            "Must be a registered institute to vote"
+          ],
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "vote_for",
+          "type": "bool"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "InstituteRegistry",
+      "discriminator": [
+        187,
+        179,
+        178,
+        238,
+        161,
+        177,
+        187,
+        118
+      ]
+    },
+    {
+      "name": "VotingState",
+      "discriminator": [
+        96,
+        6,
+        102,
+        202,
+        44,
+        29,
+        199,
+        133
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "ElectionCreated",
+      "discriminator": [
+        118,
+        3,
+        251,
+        86,
+        60,
+        52,
+        58,
+        235
+      ]
+    },
+    {
+      "name": "InstituteAdmitted",
+      "discriminator": [
+        250,
+        38,
+        96,
+        180,
+        235,
+        1,
+        105,
+        91
+      ]
+    },
+    {
+      "name": "InstituteRejected",
+      "discriminator": [
+        38,
+        222,
+        183,
+        18,
+        77,
+        139,
+        38,
+        173
+      ]
+    },
+    {
+      "name": "InstituteRemoved",
+      "discriminator": [
+        223,
+        156,
+        231,
+        3,
+        102,
+        212,
+        198,
+        75
+      ]
+    },
+    {
+      "name": "RegistryInitialized",
+      "discriminator": [
+        144,
+        138,
+        62,
+        105,
+        58,
+        38,
+        100,
+        177
+      ]
+    },
+    {
+      "name": "VoteCast",
+      "discriminator": [
+        39,
+        53,
+        195,
+        104,
+        188,
+        17,
+        225,
+        213
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InstituteAlreadyRegistered",
+      "msg": "Institute is already registered"
+    },
+    {
+      "code": 6001,
+      "name": "VoterNotRegistered",
+      "msg": "Voter is not a registered institute"
+    },
+    {
+      "code": 6002,
+      "name": "AlreadyVoted",
+      "msg": "Voter has already cast their vote"
+    },
+    {
+      "code": 6003,
+      "name": "VotingNotActive",
+      "msg": "Voting is not active"
+    },
+    {
+      "code": 6004,
+      "name": "Unauthorized",
+      "msg": "Unauthorized action"
+    },
+    {
+      "code": 6005,
+      "name": "InstituteNotFound",
+      "msg": "Institute not found in registry"
+    }
+  ],
+  "types": [
+    {
+      "name": "ElectionCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candidate",
+            "type": "pubkey"
+          },
+          {
+            "name": "eligible_voters",
+            "type": "u32"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InstituteAdmitted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candidate",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_institutes",
+            "type": "u32"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InstituteRegistry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "registered_institutes",
+            "docs": [
+              "List of all registered and trusted institute public keys"
+            ],
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "Authority that can perform administrative actions"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InstituteRejected",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candidate",
+            "type": "pubkey"
+          },
+          {
+            "name": "votes_for",
+            "type": "u32"
+          },
+          {
+            "name": "votes_against",
+            "type": "u32"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InstituteRemoved",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "institute",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RegistryInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "initial_count",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoteCast",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candidate",
+            "type": "pubkey"
+          },
+          {
+            "name": "voter",
+            "type": "pubkey"
+          },
+          {
+            "name": "vote_for",
+            "type": "bool"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VotingState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candidate_institute",
+            "docs": [
+              "Candidate institute seeking admission"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "votes_for",
+            "docs": [
+              "List of institutes that voted for"
+            ],
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "votes_against",
+            "docs": [
+              "List of institutes that voted against"
+            ],
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "total_eligible_voters",
+            "docs": [
+              "Total number of eligible voters at election start"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "Current status of the voting"
+            ],
+            "type": {
+              "defined": {
+                "name": "VotingStatus"
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "docs": [
+              "Timestamp when voting was created"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "concluded_at",
+            "docs": [
+              "Timestamp when voting concluded (if applicable)"
+            ],
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VotingStateView",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "candidate_institute",
+            "type": "pubkey"
+          },
+          {
+            "name": "votes_for_count",
+            "type": "u32"
+          },
+          {
+            "name": "votes_against_count",
+            "type": "u32"
+          },
+          {
+            "name": "total_eligible_voters",
+            "type": "u32"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "VotingStatus"
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "concluded_at",
+            "type": {
+              "option": "i64"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "VotingStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          }
+        ]
+      }
+    }
+  ]
+}

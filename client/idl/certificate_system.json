@@ -1,0 +1,490 @@
+{
+  "address": "BkxAccdVywyovJuU5RqdR1jHpWT7z6wfgZc9akEdSpqE",
+  "metadata": {
+    "name": "certificate_system",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "add_certificate",
+      "docs": [
+        "Adds a new certificate to the registry",
+        "Validates that the issuer exists in the InstituteRegistry"
+      ],
+      "discriminator": [
+        10,
+        109,
+        208,
+        255,
+        213,
+        21,
+        138,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "certificate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  101,
+                  114,
+                  116,
+                  105,
+                  102,
+                  105,
+                  99,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "certificate_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "issuer",
+          "docs": [
+            "Institute issuing the certificate (must be signer)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "institute_validator_program",
+          "docs": [
+            "InstituteValidator program"
+          ]
+        },
+        {
+          "name": "institute_registry",
+          "docs": [
+            "InstituteRegistry PDA from InstituteValidator program"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "certificate_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "correct_certificate",
+      "docs": [
+        "Corrects an existing certificate by marking it invalid and creating a new one"
+      ],
+      "discriminator": [
+        49,
+        118,
+        35,
+        34,
+        136,
+        210,
+        222,
+        227
+      ],
+      "accounts": [
+        {
+          "name": "old_certificate_pda",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  101,
+                  114,
+                  116,
+                  105,
+                  102,
+                  105,
+                  99,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "old_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "new_certificate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  101,
+                  114,
+                  116,
+                  105,
+                  102,
+                  105,
+                  99,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "new_hash"
+              }
+            ]
+          }
+        },
+        {
+          "name": "issuer",
+          "docs": [
+            "Institute correcting the certificate (must be signer and original issuer)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "institute_validator_program",
+          "docs": [
+            "InstituteValidator program"
+          ]
+        },
+        {
+          "name": "institute_registry",
+          "docs": [
+            "InstituteRegistry PDA from InstituteValidator program"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "old_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "new_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "verify_certificate",
+      "docs": [
+        "View function to verify certificate status",
+        "This is primarily for demonstration; clients typically read PDA directly via RPC"
+      ],
+      "discriminator": [
+        85,
+        168,
+        68,
+        192,
+        185,
+        249,
+        46,
+        99
+      ],
+      "accounts": [
+        {
+          "name": "certificate",
+          "docs": [
+            "Certificate to verify"
+          ]
+        }
+      ],
+      "args": [],
+      "returns": {
+        "defined": {
+          "name": "CertificateStatus"
+        }
+      }
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Certificate",
+      "discriminator": [
+        202,
+        229,
+        222,
+        220,
+        116,
+        20,
+        74,
+        67
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "CertificateAdded",
+      "discriminator": [
+        193,
+        8,
+        190,
+        156,
+        195,
+        167,
+        8,
+        110
+      ]
+    },
+    {
+      "name": "CertificateCorrected",
+      "discriminator": [
+        244,
+        210,
+        208,
+        214,
+        46,
+        120,
+        35,
+        218
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "IssuerNotRegistered",
+      "msg": "Issuer is not registered in the InstituteRegistry"
+    },
+    {
+      "code": 6001,
+      "name": "UnauthorizedIssuer",
+      "msg": "Unauthorized issuer attempting to modify certificate"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidCertificateHash",
+      "msg": "Invalid certificate hash provided"
+    },
+    {
+      "code": 6003,
+      "name": "CertificateAlreadyInvalid",
+      "msg": "Certificate is already marked as invalid"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidInstituteRegistry",
+      "msg": "Invalid InstituteRegistry account"
+    }
+  ],
+  "types": [
+    {
+      "name": "Certificate",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "certificate_hash",
+            "docs": [
+              "SHA-256 hash of the certificate"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "issuer",
+            "docs": [
+              "Public key of the issuing institute"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "is_valid",
+            "docs": [
+              "Validity status of the certificate"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "issued_at",
+            "docs": [
+              "Timestamp when certificate was issued"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "corrected_at",
+            "docs": [
+              "Timestamp when certificate was corrected (if applicable)"
+            ],
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "replacement_hash",
+            "docs": [
+              "Replacement certificate hash (if corrected)"
+            ],
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CertificateAdded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "certificate_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "issuer",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CertificateCorrected",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "old_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "new_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "issuer",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CertificateStatus",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "certificate_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "issuer",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_valid",
+            "type": "bool"
+          },
+          {
+            "name": "issued_at",
+            "type": "i64"
+          },
+          {
+            "name": "corrected_at",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "replacement_hash",
+            "type": {
+              "option": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
