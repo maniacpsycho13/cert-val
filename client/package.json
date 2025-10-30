@@ -11,6 +11,9 @@
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
     "@project-serum/anchor": "^0.26.0",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@solana/wallet-adapter-phantom": "^0.9.28",
     "@solana/wallet-adapter-react": "^0.15.39",
@@ -22,6 +25,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.548.0",
     "next": "16.0.0",
+    "pdf-parse": "^2.4.5",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "tailwind-merge": "^3.3.1"
