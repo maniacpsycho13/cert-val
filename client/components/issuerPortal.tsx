@@ -6,15 +6,10 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import { useAnchorPrograms } from '@/lib/useAnchorProgram';
 import crypto from 'crypto';
+import { PDFParse } from 'pdf-parse';
+import axios from 'axios';
 
-// Dynamic import for pdf-parse (browser compatibility)
-// const parsePDF = async (arrayBuffer) => {
-//   if (typeof window !== 'undefined') {
-//     const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
-//     return await pdfParse(Buffer.from(arrayBuffer));
-//   }
-//   throw new Error('PDF parsing only available in browser');
-// };
+
 
 const IssuerPortal = () => {
   const wallet = useAnchorWallet();
@@ -87,22 +82,28 @@ const IssuerPortal = () => {
     setExtracting(true);
 
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfData = await parsePDF(arrayBuffer);
-      const text = pdfData.text;
+      // Create FormData and append the file
+      const formDataToSend = new FormData();
+      formDataToSend.append('file', file);
       
-      console.log('Extracted PDF Text:', text); // Debug log
+      const response = await axios.post('http://localhost:3000/about', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       
-      const parsed = parseTextForCertificateData(text);
-      setFormData(prev => ({ ...prev, ...parsed }));
       
-      showMessage('success', `PDF parsed successfully! Found ${Object.keys(parsed).length} fields.`);
-    } catch (err) {
-      console.error('PDF Parse Error:', err);
-      showMessage('error', 'Failed to parse PDF. Please fill fields manually.');
+      console.log('Server Response:', response.data);
+      setFormData(prev => ({ ...prev, ...response.data }));
+      showMessage('success', 'PDF parsed successfully! Fields auto-filled.');
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      showMessage('error', 'Failed to upload PDF. Please try again.');
     } finally {
       setExtracting(false);
     }
+    
+    
   };
 
   const parseTextForCertificateData = (text) => {
