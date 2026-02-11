@@ -1,3 +1,4 @@
+"use client";
 /**
  * Client-side Bloom Filter for Certificate Verification
  * Based on the research paper's optimization approach

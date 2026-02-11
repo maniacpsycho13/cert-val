@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Program } from '@coral-xyz/anchor';
 import BloomFilterManager, { BloomFilter } from '@/actions/bloomFilter';
