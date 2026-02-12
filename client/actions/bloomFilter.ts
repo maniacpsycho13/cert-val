@@ -1,4 +1,5 @@
-"use client";
+'use client'
+
 /**
  * Client-side Bloom Filter for Certificate Verification
  * Based on the research paper's optimization approach
@@ -89,6 +90,11 @@ export class BloomFilter {
    * Serialize Bloom Filter to localStorage
    */
   save(): void {
+    if (typeof window === 'undefined') {
+      console.warn('Cannot save Bloom Filter: localStorage not available (SSR)');
+      return;
+    }
+
     try {
       const serialized = Array.from(this.bitArray);
       localStorage.setItem('certificateBloomFilter', JSON.stringify(serialized));
@@ -102,6 +108,11 @@ export class BloomFilter {
    * Deserialize Bloom Filter from localStorage
    */
   load(): boolean {
+    if (typeof window === 'undefined') {
+      console.warn('Cannot load Bloom Filter: localStorage not available (SSR)');
+      return false;
+    }
+
     try {
       const stored = localStorage.getItem('certificateBloomFilter');
       if (!stored) return false;
@@ -120,8 +131,15 @@ export class BloomFilter {
    */
   clear(): void {
     this.bitArray = new Uint8Array(FILTER_SIZE / 8);
-    localStorage.removeItem('certificateBloomFilter');
-    localStorage.removeItem('bloomFilterTimestamp');
+    
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('certificateBloomFilter');
+        localStorage.removeItem('bloomFilterTimestamp');
+      } catch (error) {
+        console.error('Failed to clear Bloom Filter from localStorage:', error);
+      }
+    }
   }
 
   /**
@@ -176,6 +194,12 @@ class BloomFilterManager {
   private static instance: BloomFilter | null = null;
 
   static getInstance(): BloomFilter {
+    if (typeof window === 'undefined') {
+      // During SSR, return a new instance without trying to access localStorage
+      console.warn('BloomFilterManager: Running in SSR mode, returning temporary instance');
+      return new BloomFilter();
+    }
+
     if (!this.instance) {
       this.instance = new BloomFilter();
       this.instance.load(); // Try to load from localStorage
@@ -184,7 +208,9 @@ class BloomFilterManager {
   }
 
   static reset(): void {
-    this.instance = new BloomFilter();
+    if (typeof window !== 'undefined') {
+      this.instance = new BloomFilter();
+    }
   }
 }
 

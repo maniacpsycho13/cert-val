@@ -1,4 +1,6 @@
 'use client';
+
+export const dynamic = 'force-dynamic'
 import React, { useState } from 'react';
 import { Search, Shield, CheckCircle, XCircle, AlertTriangle, FileText, Calendar, Building, User, Hash, Upload, Loader2, Download, Eye, Zap, Clock, Database } from 'lucide-react';
 import { PublicKey } from '@solana/web3.js';

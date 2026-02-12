@@ -1,4 +1,4 @@
-// 'use client';
+'use client';
 import { AnchorProvider, Program, Idl, setProvider } from "@project-serum/anchor";
 import { Connection, PublicKey } from "@solana/web3.js";
 import idlValidator from "@/idl/institute_validator.json";

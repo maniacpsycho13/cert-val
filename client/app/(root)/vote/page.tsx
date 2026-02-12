@@ -1,4 +1,6 @@
 'use client';
+
+export const dynamic = 'force-dynamic'
 import React, { useState, useEffect } from 'react';
 import { Vote, Users, UserPlus, CheckCircle, XCircle, Shield, AlertTriangle, Loader2, TrendingUp, Clock, Award } from 'lucide-react';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
