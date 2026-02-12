@@ -86,7 +86,7 @@ const IssuerPortal = () => {
       const formDataToSend = new FormData();
       formDataToSend.append('file', file);
       
-      const response = await axios.post('http://localhost:3000/about', formDataToSend, {
+      const response = await axios.post('https://pdf-parse-backend-p3dk.onrender.com/about', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
